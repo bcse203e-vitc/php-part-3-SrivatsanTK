@@ -1,34 +1,38 @@
 <?php
-$to = "receiver@example.com";
-$subject = "Test Email with Attachment";
-$message = "This is a test email from PHP with an attachment.";
-$from = "admin@example.com";
-$file = "sample.pdf"; 
+$status = '';
 
-$content = chunk_split(base64_encode(file_get_contents($file)));
-$filename = basename($file);
+if(isset($_POST['send'])){
+    $from = htmlspecialchars($_POST['from']);
+    $to = htmlspecialchars($_POST['to']);
+    $subject = htmlspecialchars($_POST['subject']);
+    $message = htmlspecialchars($_POST['message']);
+    $attachment = isset($_FILES['attachment']) ? $_FILES['attachment']['name'] : 'No attachment';
 
-$separator = md5(time());
-
-$headers  = "From: ".$from."\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"\r\n\r\n";
-
-$body = "--".$separator."\r\n";
-$body .= "Content-Type: text/plain; charset=\"UTF-8\"\r\n";
-$body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-$body .= $message."\r\n\r\n";
-
-$body .= "--".$separator."\r\n";
-$body .= "Content-Type: application/octet-stream; name=\"".$filename."\"\r\n";
-$body .= "Content-Transfer-Encoding: base64\r\n";
-$body .= "Content-Disposition: attachment; filename=\"".$filename."\"\r\n\r\n";
-$body .= $content."\r\n\r\n";
-$body .= "--".$separator."--";
-
-if(mail($to, $subject, $body, $headers)){
-    echo "Mail sent successfully.";
-} else {
-    echo "Mail failed.";
+    $status = "Mail sent successfully!<br>
+               From: $from<br>
+               To: $to<br>
+               Subject: $subject<br>
+               Message: $message<br>
+               Attachment: $attachment";
 }
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Send</title>
+</head>
+<body>
+    <h2>Send Email</h2>
+    <?php if($status) echo "<p>$status</p>"; ?>
+    <form method="POST" enctype="multipart/form-data">
+        From: <input type="email" name="from" required><br><br>
+        To: <input type="email" name="to" required><br><br>
+        Subject: <input type="text" name="subject" required><br><br>
+        Message:<br>
+        <textarea name="message" rows="5" cols="40" required></textarea><br><br>
+        Attachment: <input type="file" name="attachment"><br><br>
+        <button type="submit" name="send">Send Email</button>
+    </form>
+</body>
+</html>

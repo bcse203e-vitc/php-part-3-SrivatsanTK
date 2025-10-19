@@ -1,27 +1,28 @@
 <?php
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $to = "example@domain.com";
-    $subject = "Contact Form Message";
-
-    $name = htmlspecialchars($_POST['name']);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$status = '';
+if(isset($_POST['send'])){
+    $email = htmlspecialchars($_POST['email']);
     $message = htmlspecialchars($_POST['message']);
-
-    $headers = "From: $email\r\n";
-    $headers .= "Reply-To: $email\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    if(mail($to, $subject, $message, $headers)){
-        echo "Mail Sent Successfully!";
-    } else {
-        echo "Mail Sending Failed!";
-    }
+    $status = "Mail Sent Successfully!<br><br>
+               From: $email<br>
+               Message:<br>
+               <pre>$message</pre>";
 }
 ?>
 
-<form method="post">
-    Name: <input type="text" name="name" required><br>
-    Email: <input type="email" name="email" required><br>
-    Message: <textarea name="message" required></textarea><br>
-    <button type="submit">Send</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Form</title>
+</head>
+<body>
+    <h2>Contact Us</h2>
+    <?php if($status) echo "<p>$status</p>"; ?>
+    <form method="POST">
+        Your Email: <input type="email" name="email" required><br><br>
+        Message:<br>
+        <textarea name="message" rows="5" cols="40" required></textarea><br><br>
+        <button type="submit" name="send">Send Message</button>
+    </form>
+</body>
+</html>

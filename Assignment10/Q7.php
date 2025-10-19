@@ -1,13 +1,27 @@
 <?php
-$img = imagecreatefromjpeg("sample.jpg");
+// Path to the image (place sample.jpg in the same folder as this file)
+$imagePath = "j2.jpg";
 
-$color = imagecolorallocate($img, 0, 0, 255); // RGB: Red=0, Green=0, Blue=255
+// Check if image exists
+if (!file_exists($imagePath)) {
+    die("❌ Image not found! Please place 'sample.jpg' in the same folder.");
+}
 
-imagestring($img, 5, 10, 10, "VIT Chennai", $color);
+// Create image resource from JPEG
+$img = imagecreatefromjpeg($imagePath);
 
+// Allocate color for the text (R, G, B) → Blue
+$textColor = imagecolorallocate($img, 0, 0, 255);
+
+// Add text to the image
+imagestring($img, 5, 20, 20, "VIT Chennai", $textColor);
+
+// Set the content type header - JPEG image
 header("Content-Type: image/jpeg");
 
+// Output the image
 imagejpeg($img);
 
+// Free memory
 imagedestroy($img);
 ?>

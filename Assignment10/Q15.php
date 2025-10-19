@@ -1,26 +1,33 @@
 <?php
 session_start();
 
-$name = $_SESSION['user'] ?? "Guest";
+if(!isset($_SESSION['user'])){
+    $_SESSION['user'] = "Student";
+}
+
+$name = $_SESSION['user'];
+$status = '';
 
 if($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['feedback'])){
     $feedback = htmlspecialchars($_POST['feedback']);
-    $to = "admin@vit.ac.in";
-    $subject = "Student Feedback";
-    $message = "Feedback from $name:\n\n$feedback";
-    $headers = "From: noreply@vit.ac.in\r\n";
-    $headers .= "Reply-To: noreply@vit.ac.in\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    if(mail($to, $subject, $message, $headers)){
-        echo "Thank you, $name. Feedback sent!";
-    } else {
-        echo "Failed to send feedback. Please try again.";
-    }
+    $status = "Thank you, $name. Feedback sent successfully!<br><br>
+               Feedback Received:<br>
+               <pre>$feedback</pre>";
 }
 ?>
 
-<form method="post">
-    <textarea name="feedback" placeholder="Enter your feedback" required></textarea><br>
-    <button type="submit">Submit Feedback</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Feedback Form</title>
+</head>
+<body>
+    <h2>Student Feedback</h2>
+    <p>Hello, <?php echo htmlspecialchars($name); ?>! Please submit your feedback below.</p>
+    <?php if($status) echo "<p>$status</p>"; ?>
+    <form method="POST">
+        <textarea name="feedback" rows="5" cols="50" placeholder="Enter your feedback here..." required></textarea><br><br>
+        <button type="submit">Submit Feedback</button>
+    </form>
+</body>
+</html>
